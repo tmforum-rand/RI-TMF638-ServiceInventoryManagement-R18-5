@@ -1,0 +1,3628 @@
+---
+swagger: "2.0"
+info:
+  description: "## TMF API Reference : TMF 638 - Service Inventory Management v4 Release\
+    \ 18.5 - Dec 2018\n\nThe intent of this API is to provide a consistent/standardized\
+    \ mechanism to query and manipulate the Service inventory.\n\nThe Service Inventory\
+    \ API can be used to query the service instances for a customer via Self Service\
+    \ Portal or the Call Centre operator can query the service instances on behalf\
+    \ of the customer while a customer may have a complaint or a query.\nNote: Only\
+    \ the CustomerFacingServices instances will be presented to the customer.\n\n\
+    The Service Inventory API can be called by the Service Order Management to create\
+    \ a new service instance/ update an existing service instance in the Service Inventory.\n\
+    \n### Service resource\nService is an abstract base class for defining the Service\
+    \ hierarchy. All Services are characterized as either being possibly visible and\
+    \ usable by a Customer or not. This gives rise to the two subclasses of  Service:\
+    \ CustomerFacingService and ResourceFacingService.\n\n### Service Inventory API\
+    \ performs the following operations on service  :\n- Retrieve  a service or a\
+    \ collection of services depending on filter criteria\n- Partial update of a service\
+    \ (including updating rules)\n- Create a service (including default values and\
+    \ creation rules and for administration users only)\n- Delete a service (for administration\
+    \ users only)\n- Notification of events on service\n\nCopyright (c)TM Forum 2018.\
+    \ All Rights Reserved."
+  version: "4.0.0"
+  title: "Service Inventory Management"
+host: "localhost:8080"
+basePath: "/tmf-api"
+tags:
+- name: "service"
+- name: "notification listeners (client side)"
+- name: "events subscription"
+schemes:
+- "http"
+consumes:
+- "application/json;charset=utf-8"
+produces:
+- "application/json;charset=utf-8"
+paths:
+  /service:
+    get:
+      tags:
+      - "service"
+      summary: "List or find Service objects"
+      description: "This operation list or find Service entities"
+      operationId: "listService"
+      parameters:
+      - name: "fields"
+        in: "query"
+        description: "Comma-separated properties to be provided in response"
+        required: false
+        type: "string"
+      - name: "offset"
+        in: "query"
+        description: "Requested index for start of resources to be provided in response"
+        required: false
+        type: "integer"
+      - name: "limit"
+        in: "query"
+        description: "Requested number of resources to be provided in response"
+        required: false
+        type: "integer"
+      responses:
+        200:
+          description: "Success"
+          headers:
+            X-Total-Count:
+              type: "integer"
+              description: "Total number of items matching criteria"
+            X-Result-Count:
+              type: "integer"
+              description: "Actual number of items returned in the response body"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Service"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Service"
+    post:
+      tags:
+      - "service"
+      summary: "Creates a Service"
+      description: "This operation creates a Service entity."
+      operationId: "createService"
+      parameters:
+      - in: "body"
+        name: "service"
+        description: "The Service to be created"
+        required: true
+        schema:
+          $ref: "#/definitions/Service_Create"
+      responses:
+        201:
+          description: "Created"
+          schema:
+            $ref: "#/definitions/Service"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Service"
+  /service/{id}:
+    get:
+      tags:
+      - "service"
+      summary: "Retrieves a Service by ID"
+      description: "This operation retrieves a Service entity. Attribute selection\
+        \ is enabled for all first level attributes."
+      operationId: "retrieveService"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Identifier of the Service"
+        required: true
+        type: "string"
+      - name: "fields"
+        in: "query"
+        description: "Comma-separated properties to provide in response"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/Service"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Service"
+    delete:
+      tags:
+      - "service"
+      summary: "Deletes a Service"
+      description: "This operation deletes a Service entity."
+      operationId: "deleteService"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Identifier of the Service"
+        required: true
+        type: "string"
+      responses:
+        204:
+          description: "Deleted"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Service"
+    patch:
+      tags:
+      - "service"
+      summary: "Updates partially a Service"
+      description: "This operation updates partially a Service entity."
+      operationId: "patchService"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Identifier of the Service"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "service"
+        description: "The Service to be updated"
+        required: true
+        schema:
+          $ref: "#/definitions/Service_Update"
+      responses:
+        200:
+          description: "Updated"
+          schema:
+            $ref: "#/definitions/Service"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Service"
+  /hub:
+    post:
+      tags:
+      - "events subscription"
+      summary: "Register a listener"
+      description: "Sets the communication endpoint address the service instance must\
+        \ use to deliver information about its health state, execution state, failures\
+        \ and metrics."
+      operationId: "registerListener"
+      parameters:
+      - in: "body"
+        name: "data"
+        description: "Data containing the callback endpoint to deliver the information"
+        required: true
+        schema:
+          $ref: "#/definitions/EventSubscriptionInput"
+      responses:
+        201:
+          description: "Subscribed"
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "EventsSubscription"
+  /hub/{id}:
+    delete:
+      tags:
+      - "events subscription"
+      summary: "Unregister a listener"
+      description: "Resets the communication endpoint address the service instance\
+        \ must use to deliver information about its health state, execution state,\
+        \ failures and metrics."
+      operationId: "unregisterListener"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id of the registered listener"
+        required: true
+        type: "string"
+      responses:
+        204:
+          description: "Deleted"
+        400:
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "EventsSubscription"
+  /listener/serviceCreateNotification:
+    post:
+      tags:
+      - "notification listeners (client side)"
+      summary: "Client listener for entity ServiceCreateNotification"
+      description: "Example of a client listener for receiving the notification ServiceCreateNotification"
+      operationId: "listenToServiceCreateNotification"
+      parameters:
+      - in: "body"
+        name: "data"
+        description: "The event data"
+        required: true
+        schema:
+          $ref: "#/definitions/ServiceCreateNotification"
+      responses:
+        201:
+          description: "Notified"
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "NotificationListenersClientSide"
+  /listener/serviceAttributeValueChangeNotification:
+    post:
+      tags:
+      - "notification listeners (client side)"
+      summary: "Client listener for entity ServiceAttributeValueChangeNotification"
+      description: "Example of a client listener for receiving the notification ServiceAttributeValueChangeNotification"
+      operationId: "listenToServiceAttributeValueChangeNotification"
+      parameters:
+      - in: "body"
+        name: "data"
+        description: "The event data"
+        required: true
+        schema:
+          $ref: "#/definitions/ServiceAttributeValueChangeNotification"
+      responses:
+        201:
+          description: "Notified"
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "NotificationListenersClientSide"
+  /listener/serviceStateChangeNotification:
+    post:
+      tags:
+      - "notification listeners (client side)"
+      summary: "Client listener for entity ServiceStateChangeNotification"
+      description: "Example of a client listener for receiving the notification ServiceStateChangeNotification"
+      operationId: "listenToServiceStateChangeNotification"
+      parameters:
+      - in: "body"
+        name: "data"
+        description: "The event data"
+        required: true
+        schema:
+          $ref: "#/definitions/ServiceStateChangeNotification"
+      responses:
+        201:
+          description: "Notified"
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "NotificationListenersClientSide"
+  /listener/serviceBatchNotification:
+    post:
+      tags:
+      - "notification listeners (client side)"
+      summary: "Client listener for entity ServiceBatchNotification"
+      description: "Example of a client listener for receiving the notification ServiceBatchNotification"
+      operationId: "listenToServiceBatchNotification"
+      parameters:
+      - in: "body"
+        name: "data"
+        description: "The event data"
+        required: true
+        schema:
+          $ref: "#/definitions/ServiceBatchNotification"
+      responses:
+        201:
+          description: "Notified"
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "NotificationListenersClientSide"
+  /listener/serviceDeleteNotification:
+    post:
+      tags:
+      - "notification listeners (client side)"
+      summary: "Client listener for entity ServiceDeleteNotification"
+      description: "Example of a client listener for receiving the notification ServiceDeleteNotification"
+      operationId: "listenToServiceDeleteNotification"
+      parameters:
+      - in: "body"
+        name: "data"
+        description: "The event data"
+        required: true
+        schema:
+          $ref: "#/definitions/ServiceDeleteNotification"
+      responses:
+        201:
+          description: "Notified"
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "NotificationListenersClientSide"
+definitions:
+  Any: {}
+  Characteristic:
+    type: "object"
+    required:
+    - "name"
+    - "value"
+    properties:
+      name:
+        type: "string"
+        description: "Name of the characteristic"
+      valueType:
+        type: "string"
+        description: "Data type of the value of the characteristic"
+      value:
+        description: "The value of the characteristic"
+        $ref: "#/definitions/Any"
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class entity name"
+    description: "Describes a given characteristic of an object or entity through\
+      \ a name/value pair."
+    example:
+      '@baseType': "@baseType"
+      '@type': "@type"
+      valueType: "valueType"
+      name: "name"
+      '@schemaLocation': "http://example.com/aeiou"
+      value: {}
+  Note:
+    type: "object"
+    properties:
+      author:
+        type: "string"
+        description: "Author of the note"
+      date:
+        type: "string"
+        format: "date-time"
+        description: "Date of the note"
+      system:
+        type: "string"
+        description: "Describes the system from which the action related to this note\
+          \ was done"
+      text:
+        type: "string"
+        description: "Text of the note"
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class entity name"
+    description: "Extra information about a given entity"
+    example:
+      date: "2000-01-23T04:56:07.000+00:00"
+      system: "system"
+      '@baseType': "@baseType"
+      author: "author"
+      '@type': "@type"
+      text: "text"
+      '@schemaLocation': "http://example.com/aeiou"
+  Place:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "Unique identifier of the place"
+      href:
+        type: "string"
+        description: "Unique reference of the place"
+      name:
+        type: "string"
+        description: "A user-friendly name for the place, such as [Paris Store], [London\
+          \ Store], [Main Home]"
+      role:
+        type: "string"
+        description: "Role of the place, such as: [home delivery], [shop retrieval])"
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class entity name"
+    description: "Place reference. Place defines the places where the products are\
+      \ sold or delivered."
+    example:
+      role: "role"
+      '@baseType': "@baseType"
+      '@type': "@type"
+      name: "name"
+      id: "id"
+      href: "href"
+      '@schemaLocation': "http://example.com/aeiou"
+  RelatedParty:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "Unique identifier of a related party"
+      href:
+        type: "string"
+        description: "Reference of the related party, could be a party reference or\
+          \ a party role reference"
+      name:
+        type: "string"
+        description: "Name of the related party"
+      role:
+        type: "string"
+        description: "Role of the related party."
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class entity name"
+      '@referredType':
+        type: "string"
+        description: "The actual type of the target instance when needed for disambiguation."
+    description: "RelatedParty reference. A related party defines party or party role\
+      \ linked to a specific entity."
+    example:
+      '@referredType': "@referredType"
+      role: "role"
+      '@baseType': "@baseType"
+      '@type': "@type"
+      name: "name"
+      id: "id"
+      href: "href"
+      '@schemaLocation': "@schemaLocation"
+  ResourceRef:
+    type: "object"
+    required:
+    - "href"
+    - "id"
+    properties:
+      id:
+        type: "string"
+        description: "Unique identifier of the supporting resource"
+      href:
+        type: "string"
+        description: "Reference of the supporting resource"
+      name:
+        type: "string"
+        description: "Name of the resource supporting the service"
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class entity name"
+      '@referredType':
+        type: "string"
+        description: "The actual type of the target instance when needed for disambiguation."
+    example:
+      '@referredType': "@referredType"
+      '@baseType': "@baseType"
+      '@type': "@type"
+      name: "name"
+      id: "id"
+      href: "href"
+      '@schemaLocation': "http://example.com/aeiou"
+  Service:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "Unique identifier of the service"
+      href:
+        type: "string"
+        description: "Reference of the service"
+      category:
+        type: "string"
+        description: "Is it a customer facing or resource facing service"
+      description:
+        type: "string"
+        description: "Free-text description of the service"
+      endDate:
+        type: "string"
+        format: "date-time"
+        description: "Date when the service ends"
+      hasStarted:
+        type: "boolean"
+        description: "If TRUE, this Service has already been started"
+      isServiceEnabled:
+        type: "boolean"
+        description: "If FALSE, this particular Service has NOT been enabled for use"
+      isStateful:
+        type: "boolean"
+        description: "If TRUE, this Service can be changed without affecting any other\
+          \ services"
+      name:
+        type: "string"
+        description: "Name of the service"
+      serviceDate:
+        type: "string"
+        description: "Date when the service was created (whatever its status)."
+      serviceType:
+        type: "string"
+        description: "Business type of the service"
+      startDate:
+        type: "string"
+        format: "date-time"
+        description: "Date when the service starts"
+      startMode:
+        type: "string"
+        description: "This attribute is an enumerated integer that indicates how the\
+          \ Service is started, such as: 0: Unknown; 1: Automatically by the managed\
+          \ environment; 2: Automatically by the owning device; 3: Manually by the\
+          \ Provider of the Service; 4: Manually by a Customer of the Provider; 5:\
+          \ Any of the above"
+      note:
+        type: "array"
+        description: "A list of notes made on this service"
+        items:
+          $ref: "#/definitions/Note"
+      place:
+        type: "array"
+        description: "A list of places related to this service, e.g. where the service\
+          \ is installed, a delivery address for equipment, etc."
+        items:
+          $ref: "#/definitions/Place"
+      relatedParty:
+        type: "array"
+        description: "A list of related party references (RelatedParty [1..*]). A\
+          \ related party defines party or party role linked to a specific entity."
+        items:
+          $ref: "#/definitions/RelatedParty"
+      serviceCharacteristic:
+        type: "array"
+        description: "A list of characteristics that characterize this service (ServiceCharacteristic\
+          \ [*]) "
+        items:
+          $ref: "#/definitions/Characteristic"
+      serviceOrder:
+        type: "array"
+        description: "A list of service orders related to this service"
+        items:
+          $ref: "#/definitions/ServiceOrderRef"
+      serviceRelationship:
+        type: "array"
+        description: "A list of service relationships (ServiceRelationship [*]). Describes\
+          \ links with other service(s) in the inventory (useful for describing relies-on,\
+          \ relies-from between CFS for example)."
+        items:
+          $ref: "#/definitions/ServiceRelationship"
+      serviceSpecification:
+        description: "The specification from which this service was instantiated"
+        $ref: "#/definitions/ServiceSpecificationRef"
+      state:
+        description: "The life cycle state of the service, such as: feasibilityChecked,\
+          \ designed, reserved, active, inactive, terminated"
+        $ref: "#/definitions/ServiceStateType"
+      supportingResource:
+        type: "array"
+        description: "A list of supporting resources (SupportingResource [*]).Note:\
+          \ only Service of type RFS can be associated with Resources."
+        items:
+          $ref: "#/definitions/ResourceRef"
+      supportingService:
+        type: "array"
+        description: "A list of supporting services (SupportingService [*]). A collection\
+          \ of services that support this service (bundling, link CFS to RFS)."
+        items:
+          $ref: "#/definitions/ServiceRef"
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class entity name"
+    description: "Service is a base class for defining the Service hierarchy. All\
+      \ Services are characterized as either being possibly visible and usable by\
+      \ a Customer or not. This gives rise to the two subclasses of Service: CustomerFacingService\
+      \ and ResourceFacingService."
+    example:
+      serviceType: "serviceType"
+      note:
+      - date: "2000-01-23T04:56:07.000+00:00"
+        system: "system"
+        '@baseType': "@baseType"
+        author: "author"
+        '@type': "@type"
+        text: "text"
+        '@schemaLocation': "http://example.com/aeiou"
+      - date: "2000-01-23T04:56:07.000+00:00"
+        system: "system"
+        '@baseType': "@baseType"
+        author: "author"
+        '@type': "@type"
+        text: "text"
+        '@schemaLocation': "http://example.com/aeiou"
+      serviceDate: "serviceDate"
+      endDate: "2000-01-23T04:56:07.000+00:00"
+      supportingResource:
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      '@type': "@type"
+      hasStarted: true
+      description: "description"
+      serviceOrder:
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        serviceOrderItemId: "serviceOrderItemId"
+        '@type': "@type"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        serviceOrderItemId: "serviceOrderItemId"
+        '@type': "@type"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      serviceRelationship:
+      - relationshipType: "relationshipType"
+        '@baseType': "@baseType"
+        service:
+          '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@type': "@type"
+        '@schemaLocation': "http://example.com/aeiou"
+      - relationshipType: "relationshipType"
+        '@baseType': "@baseType"
+        service:
+          '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@type': "@type"
+        '@schemaLocation': "http://example.com/aeiou"
+      '@baseType': "@baseType"
+      id: "id"
+      href: "href"
+      place:
+      - role: "role"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      - role: "role"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      state: {}
+      '@schemaLocation': "http://example.com/aeiou"
+      isStateful: true
+      serviceCharacteristic:
+      - '@baseType': "@baseType"
+        '@type': "@type"
+        valueType: "valueType"
+        name: "name"
+        '@schemaLocation': "http://example.com/aeiou"
+        value: {}
+      - '@baseType': "@baseType"
+        '@type': "@type"
+        valueType: "valueType"
+        name: "name"
+        '@schemaLocation': "http://example.com/aeiou"
+        value: {}
+      serviceSpecification:
+        targetServiceSchema:
+          '@baseType': "@baseType"
+          '@type': "@type"
+          '@schemaLocation': "@schemaLocation"
+        '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+        version: "version"
+      supportingService:
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      relatedParty:
+      - '@referredType': "@referredType"
+        role: "role"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "@schemaLocation"
+      - '@referredType': "@referredType"
+        role: "role"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "@schemaLocation"
+      isServiceEnabled: true
+      startMode: "startMode"
+      name: "name"
+      category: "category"
+      startDate: "2000-01-23T04:56:07.000+00:00"
+  Service_Create:
+    type: "object"
+    required:
+    - "serviceSpecification"
+    - "state"
+    properties:
+      category:
+        type: "string"
+        description: "Is it a customer facing or resource facing service"
+      description:
+        type: "string"
+        description: "Free-text description of the service"
+      endDate:
+        type: "string"
+        format: "date-time"
+        description: "Date when the service ends"
+      hasStarted:
+        type: "boolean"
+        description: "If TRUE, this Service has already been started"
+      isServiceEnabled:
+        type: "boolean"
+        description: "If FALSE, this particular Service has NOT been enabled for use"
+      isStateful:
+        type: "boolean"
+        description: "If TRUE, this Service can be changed without affecting any other\
+          \ services"
+      name:
+        type: "string"
+        description: "Name of the service"
+      serviceDate:
+        type: "string"
+        description: "Date when the service was created (whatever its status)."
+      serviceType:
+        type: "string"
+        description: "Business type of the service"
+      startDate:
+        type: "string"
+        format: "date-time"
+        description: "Date when the service starts"
+      startMode:
+        type: "string"
+        description: "This attribute is an enumerated integer that indicates how the\
+          \ Service is started, such as: 0: Unknown; 1: Automatically by the managed\
+          \ environment; 2: Automatically by the owning device; 3: Manually by the\
+          \ Provider of the Service; 4: Manually by a Customer of the Provider; 5:\
+          \ Any of the above"
+      note:
+        type: "array"
+        description: "A list of notes made on this service"
+        items:
+          $ref: "#/definitions/Note"
+      place:
+        type: "array"
+        description: "A list of places related to this service, e.g. where the service\
+          \ is installed, a delivery address for equipment, etc."
+        items:
+          $ref: "#/definitions/Place"
+      relatedParty:
+        type: "array"
+        description: "A list of related party references (RelatedParty [1..*]). A\
+          \ related party defines party or party role linked to a specific entity."
+        items:
+          $ref: "#/definitions/RelatedParty"
+      serviceCharacteristic:
+        type: "array"
+        description: "A list of characteristics that characterize this service (ServiceCharacteristic\
+          \ [*]) "
+        items:
+          $ref: "#/definitions/Characteristic"
+      serviceOrder:
+        type: "array"
+        description: "A list of service orders related to this service"
+        items:
+          $ref: "#/definitions/ServiceOrderRef"
+      serviceRelationship:
+        type: "array"
+        description: "A list of service relationships (ServiceRelationship [*]). Describes\
+          \ links with other service(s) in the inventory (useful for describing relies-on,\
+          \ relies-from between CFS for example)."
+        items:
+          $ref: "#/definitions/ServiceRelationship"
+      serviceSpecification:
+        description: "The specification from which this service was instantiated"
+        $ref: "#/definitions/ServiceSpecificationRef"
+      state:
+        description: "The life cycle state of the service, such as: feasibilityChecked,\
+          \ designed, reserved, active, inactive, terminated"
+        $ref: "#/definitions/ServiceStateType"
+      supportingResource:
+        type: "array"
+        description: "A list of supporting resources (SupportingResource [*]).Note:\
+          \ only Service of type RFS can be associated with Resources."
+        items:
+          $ref: "#/definitions/ResourceRef"
+      supportingService:
+        type: "array"
+        description: "A list of supporting services (SupportingService [*]). A collection\
+          \ of services that support this service (bundling, link CFS to RFS)."
+        items:
+          $ref: "#/definitions/ServiceRef"
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class entity name"
+    description: "Service is a base class for defining the Service hierarchy. All\
+      \ Services are characterized as either being possibly visible and usable by\
+      \ a Customer or not. This gives rise to the two subclasses of Service: CustomerFacingService\
+      \ and ResourceFacingService.\nSkipped properties: id,href"
+    example:
+      serviceType: "serviceType"
+      note:
+      - date: "2000-01-23T04:56:07.000+00:00"
+        system: "system"
+        '@baseType': "@baseType"
+        author: "author"
+        '@type': "@type"
+        text: "text"
+        '@schemaLocation': "http://example.com/aeiou"
+      - date: "2000-01-23T04:56:07.000+00:00"
+        system: "system"
+        '@baseType': "@baseType"
+        author: "author"
+        '@type': "@type"
+        text: "text"
+        '@schemaLocation': "http://example.com/aeiou"
+      serviceDate: "serviceDate"
+      endDate: "2000-01-23T04:56:07.000+00:00"
+      supportingResource:
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      '@type': "@type"
+      hasStarted: true
+      serviceSpecification:
+        targetServiceSchema:
+          '@baseType': "@baseType"
+          '@type': "@type"
+          '@schemaLocation': "@schemaLocation"
+        '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+        version: "version"
+      description: "description"
+      serviceOrder:
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        serviceOrderItemId: "serviceOrderItemId"
+        '@type': "@type"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        serviceOrderItemId: "serviceOrderItemId"
+        '@type': "@type"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      supportingService:
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      relatedParty:
+      - '@referredType': "@referredType"
+        role: "role"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "@schemaLocation"
+      - '@referredType': "@referredType"
+        role: "role"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "@schemaLocation"
+      isServiceEnabled: true
+      serviceRelationship:
+      - relationshipType: "relationshipType"
+        '@baseType': "@baseType"
+        service:
+          '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@type': "@type"
+        '@schemaLocation': "http://example.com/aeiou"
+      - relationshipType: "relationshipType"
+        '@baseType': "@baseType"
+        service:
+          '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@type': "@type"
+        '@schemaLocation': "http://example.com/aeiou"
+      '@baseType': "@baseType"
+      startMode: "startMode"
+      name: "name"
+      place:
+      - role: "role"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      - role: "role"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      state: {}
+      category: "category"
+      '@schemaLocation': "http://example.com/aeiou"
+      startDate: "2000-01-23T04:56:07.000+00:00"
+      isStateful: true
+      serviceCharacteristic:
+      - '@baseType': "@baseType"
+        '@type': "@type"
+        valueType: "valueType"
+        name: "name"
+        '@schemaLocation': "http://example.com/aeiou"
+        value: {}
+      - '@baseType': "@baseType"
+        '@type': "@type"
+        valueType: "valueType"
+        name: "name"
+        '@schemaLocation': "http://example.com/aeiou"
+        value: {}
+  Service_Update:
+    type: "object"
+    properties:
+      category:
+        type: "string"
+        description: "Is it a customer facing or resource facing service"
+      description:
+        type: "string"
+        description: "Free-text description of the service"
+      endDate:
+        type: "string"
+        format: "date-time"
+        description: "Date when the service ends"
+      hasStarted:
+        type: "boolean"
+        description: "If TRUE, this Service has already been started"
+      isServiceEnabled:
+        type: "boolean"
+        description: "If FALSE, this particular Service has NOT been enabled for use"
+      isStateful:
+        type: "boolean"
+        description: "If TRUE, this Service can be changed without affecting any other\
+          \ services"
+      name:
+        type: "string"
+        description: "Name of the service"
+      serviceDate:
+        type: "string"
+        description: "Date when the service was created (whatever its status)."
+      serviceType:
+        type: "string"
+        description: "Business type of the service"
+      startDate:
+        type: "string"
+        format: "date-time"
+        description: "Date when the service starts"
+      startMode:
+        type: "string"
+        description: "This attribute is an enumerated integer that indicates how the\
+          \ Service is started, such as: 0: Unknown; 1: Automatically by the managed\
+          \ environment; 2: Automatically by the owning device; 3: Manually by the\
+          \ Provider of the Service; 4: Manually by a Customer of the Provider; 5:\
+          \ Any of the above"
+      note:
+        type: "array"
+        description: "A list of notes made on this service"
+        items:
+          $ref: "#/definitions/Note"
+      place:
+        type: "array"
+        description: "A list of places related to this service, e.g. where the service\
+          \ is installed, a delivery address for equipment, etc."
+        items:
+          $ref: "#/definitions/Place"
+      relatedParty:
+        type: "array"
+        description: "A list of related party references (RelatedParty [1..*]). A\
+          \ related party defines party or party role linked to a specific entity."
+        items:
+          $ref: "#/definitions/RelatedParty"
+      serviceCharacteristic:
+        type: "array"
+        description: "A list of characteristics that characterize this service (ServiceCharacteristic\
+          \ [*]) "
+        items:
+          $ref: "#/definitions/Characteristic"
+      serviceOrder:
+        type: "array"
+        description: "A list of service orders related to this service"
+        items:
+          $ref: "#/definitions/ServiceOrderRef"
+      serviceSpecification:
+        description: "The specification from which this service was instantiated"
+        $ref: "#/definitions/ServiceSpecificationRef"
+      state:
+        description: "The life cycle state of the service, such as: feasibilityChecked,\
+          \ designed, reserved, active, inactive, terminated"
+        $ref: "#/definitions/ServiceStateType"
+      supportingResource:
+        type: "array"
+        description: "A list of supporting resources (SupportingResource [*]).Note:\
+          \ only Service of type RFS can be associated with Resources."
+        items:
+          $ref: "#/definitions/ResourceRef"
+      supportingService:
+        type: "array"
+        description: "A list of supporting services (SupportingService [*]). A collection\
+          \ of services that support this service (bundling, link CFS to RFS)."
+        items:
+          $ref: "#/definitions/ServiceRef"
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class entity name"
+    description: "Service is a base class for defining the Service hierarchy. All\
+      \ Services are characterized as either being possibly visible and usable by\
+      \ a Customer or not. This gives rise to the two subclasses of Service: CustomerFacingService\
+      \ and ResourceFacingService.\nSkipped properties: id,href,serviceRelationship"
+    example:
+      serviceType: "serviceType"
+      note:
+      - date: "2000-01-23T04:56:07.000+00:00"
+        system: "system"
+        '@baseType': "@baseType"
+        author: "author"
+        '@type': "@type"
+        text: "text"
+        '@schemaLocation': "http://example.com/aeiou"
+      - date: "2000-01-23T04:56:07.000+00:00"
+        system: "system"
+        '@baseType': "@baseType"
+        author: "author"
+        '@type': "@type"
+        text: "text"
+        '@schemaLocation': "http://example.com/aeiou"
+      serviceDate: "serviceDate"
+      endDate: "2000-01-23T04:56:07.000+00:00"
+      supportingResource:
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      '@type': "@type"
+      hasStarted: true
+      serviceSpecification:
+        targetServiceSchema:
+          '@baseType': "@baseType"
+          '@type': "@type"
+          '@schemaLocation': "@schemaLocation"
+        '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+        version: "version"
+      description: "description"
+      serviceOrder:
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        serviceOrderItemId: "serviceOrderItemId"
+        '@type': "@type"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        serviceOrderItemId: "serviceOrderItemId"
+        '@type': "@type"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      supportingService:
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      - '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      relatedParty:
+      - '@referredType': "@referredType"
+        role: "role"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "@schemaLocation"
+      - '@referredType': "@referredType"
+        role: "role"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "@schemaLocation"
+      isServiceEnabled: true
+      '@baseType': "@baseType"
+      startMode: "startMode"
+      name: "name"
+      place:
+      - role: "role"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      - role: "role"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      state: {}
+      category: "category"
+      '@schemaLocation': "http://example.com/aeiou"
+      startDate: "2000-01-23T04:56:07.000+00:00"
+      isStateful: true
+      serviceCharacteristic:
+      - '@baseType': "@baseType"
+        '@type': "@type"
+        valueType: "valueType"
+        name: "name"
+        '@schemaLocation': "http://example.com/aeiou"
+        value: {}
+      - '@baseType': "@baseType"
+        '@type': "@type"
+        valueType: "valueType"
+        name: "name"
+        '@schemaLocation': "http://example.com/aeiou"
+        value: {}
+  ServiceOrderRef:
+    type: "object"
+    required:
+    - "href"
+    - "id"
+    properties:
+      id:
+        type: "string"
+        description: "Unique identifier of the Service Order"
+      href:
+        type: "string"
+        description: "Reference of the Service Order"
+      serviceOrderItemId:
+        type: "string"
+        description: "Unique identifier of the Service Order Item within a service\
+          \ order, not populated if this is a reference to a service order"
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class entity name"
+      '@referredType':
+        type: "string"
+        description: "The actual type of the target instance when needed for disambiguation."
+    description: "Service Order reference. Useful to understand the which was the\
+      \ Service order through which the service was instantiated in the service inventory"
+    example:
+      '@referredType': "@referredType"
+      '@baseType': "@baseType"
+      serviceOrderItemId: "serviceOrderItemId"
+      '@type': "@type"
+      id: "id"
+      href: "href"
+      '@schemaLocation': "http://example.com/aeiou"
+  ServiceRef:
+    type: "object"
+    required:
+    - "href"
+    - "id"
+    properties:
+      id:
+        type: "string"
+        description: "Id of the service"
+      href:
+        type: "string"
+        description: "reference of the service"
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class entity name"
+      '@referredType':
+        type: "string"
+        description: "The actual type of the target instance when needed for disambiguation."
+    description: "Service reference, for when Service is used by other entities"
+    example:
+      '@referredType': "@referredType"
+      '@baseType': "@baseType"
+      '@type': "@type"
+      id: "id"
+      href: "href"
+      '@schemaLocation': "http://example.com/aeiou"
+  ServiceRelationship:
+    type: "object"
+    required:
+    - "relationshipType"
+    - "service"
+    properties:
+      relationshipType:
+        type: "string"
+        description: "The type of relationship (e.g. depends on, enables)"
+      service:
+        description: "The service being referred to"
+        $ref: "#/definitions/ServiceRef"
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class entity name"
+    description: "Describes links with services of the same category (useful for bundled\
+      \ services)"
+    example:
+      relationshipType: "relationshipType"
+      '@baseType': "@baseType"
+      service:
+        '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "http://example.com/aeiou"
+      '@type': "@type"
+      '@schemaLocation': "http://example.com/aeiou"
+  ServiceSpecificationRef:
+    type: "object"
+    required:
+    - "href"
+    - "id"
+    properties:
+      id:
+        type: "string"
+        description: "Unique identifier of the service specification"
+      href:
+        type: "string"
+        description: "Reference of the serviceSpecification"
+      name:
+        type: "string"
+        description: "Name of the requiredServiceSpecification"
+      version:
+        type: "string"
+        description: "Service specification version"
+      targetServiceSchema:
+        description: "A target service schema reference (TargetServiceSchemaRef).\
+          \ The reference object to the schema and type of target service which is\
+          \ described by service specification."
+        $ref: "#/definitions/TargetServiceSchema"
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class entity name"
+      '@referredType':
+        type: "string"
+        description: "The actual type of the target instance when needed for disambiguation."
+    description: "Service specification reference: ServiceSpecification(s) required\
+      \ to realize a ProductSpecification."
+    example:
+      targetServiceSchema:
+        '@baseType': "@baseType"
+        '@type': "@type"
+        '@schemaLocation': "@schemaLocation"
+      '@referredType': "@referredType"
+      '@baseType': "@baseType"
+      '@type': "@type"
+      name: "name"
+      id: "id"
+      href: "href"
+      '@schemaLocation': "http://example.com/aeiou"
+      version: "version"
+  ServiceStateType:
+    type: "string"
+    description: "Valid values for the lifecycle state of the service"
+    enum:
+    - "feasibilityChecked"
+    - "designed"
+    - "reserved"
+    - "inactive"
+    - "active"
+    - "terminated"
+  TargetServiceSchema:
+    type: "object"
+    required:
+    - "@schemaLocation"
+    - "@type"
+    properties:
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        description: "This field provides a link to the schema describing the target\
+          \ service"
+      '@type':
+        type: "string"
+        description: "Class type of the target service"
+    description: "The reference object to the schema and type of target service which\
+      \ is described by service specification"
+    example:
+      '@baseType': "@baseType"
+      '@type': "@type"
+      '@schemaLocation': "@schemaLocation"
+  EventSubscription:
+    type: "object"
+    required:
+    - "callback"
+    - "id"
+    properties:
+      id:
+        type: "string"
+        description: "Id of the listener"
+      callback:
+        type: "string"
+        description: "The callback being registered."
+      query:
+        type: "string"
+        description: "additional data to be passed"
+    description: "Sets the communication endpoint address the service instance must\
+      \ use to deliver notification information"
+    example:
+      query: "query"
+      callback: "callback"
+      id: "id"
+  EventSubscriptionInput:
+    type: "object"
+    required:
+    - "callback"
+    properties:
+      callback:
+        type: "string"
+        description: "The callback being registered."
+      query:
+        type: "string"
+        description: "additional data to be passed"
+    description: "Sets the communication endpoint address the service instance must\
+      \ use to deliver notification information"
+    example:
+      query: "query"
+      callback: "callback"
+  ServiceCreateNotification:
+    type: "object"
+    properties:
+      eventId:
+        type: "string"
+        description: "The identifier of the notification"
+      eventTime:
+        type: "string"
+        format: "date-time"
+        description: "Time of the event occurence"
+      eventType:
+        type: "string"
+        description: "The type of the notification"
+      fieldPath:
+        type: "string"
+        description: "The path identifying the object field concerned by this notification"
+      resourcePath:
+        type: "string"
+        description: "The path identifying the resource object concerned by this notification"
+      event:
+        description: "The event linked to the involved resource object"
+        $ref: "#/definitions/ServiceCreateEvent"
+    description: "The notification data structure"
+    example:
+      eventId: "eventId"
+      resourcePath: "resourcePath"
+      eventTime: "2000-01-23T04:56:07.000+00:00"
+      fieldPath: "fieldPath"
+      eventType: "eventType"
+      event:
+        service:
+          serviceType: "serviceType"
+          note:
+          - date: "2000-01-23T04:56:07.000+00:00"
+            system: "system"
+            '@baseType': "@baseType"
+            author: "author"
+            '@type': "@type"
+            text: "text"
+            '@schemaLocation': "http://example.com/aeiou"
+          - date: "2000-01-23T04:56:07.000+00:00"
+            system: "system"
+            '@baseType': "@baseType"
+            author: "author"
+            '@type': "@type"
+            text: "text"
+            '@schemaLocation': "http://example.com/aeiou"
+          serviceDate: "serviceDate"
+          endDate: "2000-01-23T04:56:07.000+00:00"
+          supportingResource:
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@type': "@type"
+          hasStarted: true
+          description: "description"
+          serviceOrder:
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            serviceOrderItemId: "serviceOrderItemId"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            serviceOrderItemId: "serviceOrderItemId"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          serviceRelationship:
+          - relationshipType: "relationshipType"
+            '@baseType': "@baseType"
+            service:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              id: "id"
+              href: "href"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@type': "@type"
+            '@schemaLocation': "http://example.com/aeiou"
+          - relationshipType: "relationshipType"
+            '@baseType': "@baseType"
+            service:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              id: "id"
+              href: "href"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@type': "@type"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@baseType': "@baseType"
+          id: "id"
+          href: "href"
+          place:
+          - role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          state: {}
+          '@schemaLocation': "http://example.com/aeiou"
+          isStateful: true
+          serviceCharacteristic:
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            valueType: "valueType"
+            name: "name"
+            '@schemaLocation': "http://example.com/aeiou"
+            value: {}
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            valueType: "valueType"
+            name: "name"
+            '@schemaLocation': "http://example.com/aeiou"
+            value: {}
+          serviceSpecification:
+            targetServiceSchema:
+              '@baseType': "@baseType"
+              '@type': "@type"
+              '@schemaLocation': "@schemaLocation"
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+            version: "version"
+          supportingService:
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          relatedParty:
+          - '@referredType': "@referredType"
+            role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "@schemaLocation"
+          - '@referredType': "@referredType"
+            role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "@schemaLocation"
+          isServiceEnabled: true
+          startMode: "startMode"
+          name: "name"
+          category: "category"
+          startDate: "2000-01-23T04:56:07.000+00:00"
+  ServiceCreateEvent:
+    type: "object"
+    properties:
+      service:
+        description: "The involved resource data for the event"
+        $ref: "#/definitions/Service"
+    description: "The event data structure"
+    example:
+      service:
+        serviceType: "serviceType"
+        note:
+        - date: "2000-01-23T04:56:07.000+00:00"
+          system: "system"
+          '@baseType': "@baseType"
+          author: "author"
+          '@type': "@type"
+          text: "text"
+          '@schemaLocation': "http://example.com/aeiou"
+        - date: "2000-01-23T04:56:07.000+00:00"
+          system: "system"
+          '@baseType': "@baseType"
+          author: "author"
+          '@type': "@type"
+          text: "text"
+          '@schemaLocation': "http://example.com/aeiou"
+        serviceDate: "serviceDate"
+        endDate: "2000-01-23T04:56:07.000+00:00"
+        supportingResource:
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@type': "@type"
+        hasStarted: true
+        description: "description"
+        serviceOrder:
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          serviceOrderItemId: "serviceOrderItemId"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          serviceOrderItemId: "serviceOrderItemId"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        serviceRelationship:
+        - relationshipType: "relationshipType"
+          '@baseType': "@baseType"
+          service:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@type': "@type"
+          '@schemaLocation': "http://example.com/aeiou"
+        - relationshipType: "relationshipType"
+          '@baseType': "@baseType"
+          service:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@type': "@type"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@baseType': "@baseType"
+        id: "id"
+        href: "href"
+        place:
+        - role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        state: {}
+        '@schemaLocation': "http://example.com/aeiou"
+        isStateful: true
+        serviceCharacteristic:
+        - '@baseType': "@baseType"
+          '@type': "@type"
+          valueType: "valueType"
+          name: "name"
+          '@schemaLocation': "http://example.com/aeiou"
+          value: {}
+        - '@baseType': "@baseType"
+          '@type': "@type"
+          valueType: "valueType"
+          name: "name"
+          '@schemaLocation': "http://example.com/aeiou"
+          value: {}
+        serviceSpecification:
+          targetServiceSchema:
+            '@baseType': "@baseType"
+            '@type': "@type"
+            '@schemaLocation': "@schemaLocation"
+          '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+          version: "version"
+        supportingService:
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        relatedParty:
+        - '@referredType': "@referredType"
+          role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "@schemaLocation"
+        - '@referredType': "@referredType"
+          role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "@schemaLocation"
+        isServiceEnabled: true
+        startMode: "startMode"
+        name: "name"
+        category: "category"
+        startDate: "2000-01-23T04:56:07.000+00:00"
+  ServiceAttributeValueChangeNotification:
+    type: "object"
+    properties:
+      eventId:
+        type: "string"
+        description: "The identifier of the notification"
+      eventTime:
+        type: "string"
+        format: "date-time"
+        description: "Time of the event occurence"
+      eventType:
+        type: "string"
+        description: "The type of the notification"
+      fieldPath:
+        type: "string"
+        description: "The path identifying the object field concerned by this notification"
+      resourcePath:
+        type: "string"
+        description: "The path identifying the resource object concerned by this notification"
+      event:
+        description: "The event linked to the involved resource object"
+        $ref: "#/definitions/ServiceAttributeValueChangeEvent"
+    description: "The notification data structure"
+    example:
+      eventId: "eventId"
+      resourcePath: "resourcePath"
+      eventTime: "2000-01-23T04:56:07.000+00:00"
+      fieldPath: "fieldPath"
+      eventType: "eventType"
+      event:
+        service:
+          serviceType: "serviceType"
+          note:
+          - date: "2000-01-23T04:56:07.000+00:00"
+            system: "system"
+            '@baseType': "@baseType"
+            author: "author"
+            '@type': "@type"
+            text: "text"
+            '@schemaLocation': "http://example.com/aeiou"
+          - date: "2000-01-23T04:56:07.000+00:00"
+            system: "system"
+            '@baseType': "@baseType"
+            author: "author"
+            '@type': "@type"
+            text: "text"
+            '@schemaLocation': "http://example.com/aeiou"
+          serviceDate: "serviceDate"
+          endDate: "2000-01-23T04:56:07.000+00:00"
+          supportingResource:
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@type': "@type"
+          hasStarted: true
+          description: "description"
+          serviceOrder:
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            serviceOrderItemId: "serviceOrderItemId"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            serviceOrderItemId: "serviceOrderItemId"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          serviceRelationship:
+          - relationshipType: "relationshipType"
+            '@baseType': "@baseType"
+            service:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              id: "id"
+              href: "href"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@type': "@type"
+            '@schemaLocation': "http://example.com/aeiou"
+          - relationshipType: "relationshipType"
+            '@baseType': "@baseType"
+            service:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              id: "id"
+              href: "href"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@type': "@type"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@baseType': "@baseType"
+          id: "id"
+          href: "href"
+          place:
+          - role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          state: {}
+          '@schemaLocation': "http://example.com/aeiou"
+          isStateful: true
+          serviceCharacteristic:
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            valueType: "valueType"
+            name: "name"
+            '@schemaLocation': "http://example.com/aeiou"
+            value: {}
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            valueType: "valueType"
+            name: "name"
+            '@schemaLocation': "http://example.com/aeiou"
+            value: {}
+          serviceSpecification:
+            targetServiceSchema:
+              '@baseType': "@baseType"
+              '@type': "@type"
+              '@schemaLocation': "@schemaLocation"
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+            version: "version"
+          supportingService:
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          relatedParty:
+          - '@referredType': "@referredType"
+            role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "@schemaLocation"
+          - '@referredType': "@referredType"
+            role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "@schemaLocation"
+          isServiceEnabled: true
+          startMode: "startMode"
+          name: "name"
+          category: "category"
+          startDate: "2000-01-23T04:56:07.000+00:00"
+  ServiceAttributeValueChangeEvent:
+    type: "object"
+    properties:
+      service:
+        description: "The involved resource data for the event"
+        $ref: "#/definitions/Service"
+    description: "The event data structure"
+    example:
+      service:
+        serviceType: "serviceType"
+        note:
+        - date: "2000-01-23T04:56:07.000+00:00"
+          system: "system"
+          '@baseType': "@baseType"
+          author: "author"
+          '@type': "@type"
+          text: "text"
+          '@schemaLocation': "http://example.com/aeiou"
+        - date: "2000-01-23T04:56:07.000+00:00"
+          system: "system"
+          '@baseType': "@baseType"
+          author: "author"
+          '@type': "@type"
+          text: "text"
+          '@schemaLocation': "http://example.com/aeiou"
+        serviceDate: "serviceDate"
+        endDate: "2000-01-23T04:56:07.000+00:00"
+        supportingResource:
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@type': "@type"
+        hasStarted: true
+        description: "description"
+        serviceOrder:
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          serviceOrderItemId: "serviceOrderItemId"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          serviceOrderItemId: "serviceOrderItemId"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        serviceRelationship:
+        - relationshipType: "relationshipType"
+          '@baseType': "@baseType"
+          service:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@type': "@type"
+          '@schemaLocation': "http://example.com/aeiou"
+        - relationshipType: "relationshipType"
+          '@baseType': "@baseType"
+          service:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@type': "@type"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@baseType': "@baseType"
+        id: "id"
+        href: "href"
+        place:
+        - role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        state: {}
+        '@schemaLocation': "http://example.com/aeiou"
+        isStateful: true
+        serviceCharacteristic:
+        - '@baseType': "@baseType"
+          '@type': "@type"
+          valueType: "valueType"
+          name: "name"
+          '@schemaLocation': "http://example.com/aeiou"
+          value: {}
+        - '@baseType': "@baseType"
+          '@type': "@type"
+          valueType: "valueType"
+          name: "name"
+          '@schemaLocation': "http://example.com/aeiou"
+          value: {}
+        serviceSpecification:
+          targetServiceSchema:
+            '@baseType': "@baseType"
+            '@type': "@type"
+            '@schemaLocation': "@schemaLocation"
+          '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+          version: "version"
+        supportingService:
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        relatedParty:
+        - '@referredType': "@referredType"
+          role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "@schemaLocation"
+        - '@referredType': "@referredType"
+          role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "@schemaLocation"
+        isServiceEnabled: true
+        startMode: "startMode"
+        name: "name"
+        category: "category"
+        startDate: "2000-01-23T04:56:07.000+00:00"
+  ServiceStateChangeNotification:
+    type: "object"
+    properties:
+      eventId:
+        type: "string"
+        description: "The identifier of the notification"
+      eventTime:
+        type: "string"
+        format: "date-time"
+        description: "Time of the event occurence"
+      eventType:
+        type: "string"
+        description: "The type of the notification"
+      fieldPath:
+        type: "string"
+        description: "The path identifying the object field concerned by this notification"
+      resourcePath:
+        type: "string"
+        description: "The path identifying the resource object concerned by this notification"
+      event:
+        description: "The event linked to the involved resource object"
+        $ref: "#/definitions/ServiceStateChangeEvent"
+    description: "The notification data structure"
+    example:
+      eventId: "eventId"
+      resourcePath: "resourcePath"
+      eventTime: "2000-01-23T04:56:07.000+00:00"
+      fieldPath: "fieldPath"
+      eventType: "eventType"
+      event:
+        service:
+          serviceType: "serviceType"
+          note:
+          - date: "2000-01-23T04:56:07.000+00:00"
+            system: "system"
+            '@baseType': "@baseType"
+            author: "author"
+            '@type': "@type"
+            text: "text"
+            '@schemaLocation': "http://example.com/aeiou"
+          - date: "2000-01-23T04:56:07.000+00:00"
+            system: "system"
+            '@baseType': "@baseType"
+            author: "author"
+            '@type': "@type"
+            text: "text"
+            '@schemaLocation': "http://example.com/aeiou"
+          serviceDate: "serviceDate"
+          endDate: "2000-01-23T04:56:07.000+00:00"
+          supportingResource:
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@type': "@type"
+          hasStarted: true
+          description: "description"
+          serviceOrder:
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            serviceOrderItemId: "serviceOrderItemId"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            serviceOrderItemId: "serviceOrderItemId"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          serviceRelationship:
+          - relationshipType: "relationshipType"
+            '@baseType': "@baseType"
+            service:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              id: "id"
+              href: "href"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@type': "@type"
+            '@schemaLocation': "http://example.com/aeiou"
+          - relationshipType: "relationshipType"
+            '@baseType': "@baseType"
+            service:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              id: "id"
+              href: "href"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@type': "@type"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@baseType': "@baseType"
+          id: "id"
+          href: "href"
+          place:
+          - role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          state: {}
+          '@schemaLocation': "http://example.com/aeiou"
+          isStateful: true
+          serviceCharacteristic:
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            valueType: "valueType"
+            name: "name"
+            '@schemaLocation': "http://example.com/aeiou"
+            value: {}
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            valueType: "valueType"
+            name: "name"
+            '@schemaLocation': "http://example.com/aeiou"
+            value: {}
+          serviceSpecification:
+            targetServiceSchema:
+              '@baseType': "@baseType"
+              '@type': "@type"
+              '@schemaLocation': "@schemaLocation"
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+            version: "version"
+          supportingService:
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          relatedParty:
+          - '@referredType': "@referredType"
+            role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "@schemaLocation"
+          - '@referredType': "@referredType"
+            role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "@schemaLocation"
+          isServiceEnabled: true
+          startMode: "startMode"
+          name: "name"
+          category: "category"
+          startDate: "2000-01-23T04:56:07.000+00:00"
+  ServiceStateChangeEvent:
+    type: "object"
+    properties:
+      service:
+        description: "The involved resource data for the event"
+        $ref: "#/definitions/Service"
+    description: "The event data structure"
+    example:
+      service:
+        serviceType: "serviceType"
+        note:
+        - date: "2000-01-23T04:56:07.000+00:00"
+          system: "system"
+          '@baseType': "@baseType"
+          author: "author"
+          '@type': "@type"
+          text: "text"
+          '@schemaLocation': "http://example.com/aeiou"
+        - date: "2000-01-23T04:56:07.000+00:00"
+          system: "system"
+          '@baseType': "@baseType"
+          author: "author"
+          '@type': "@type"
+          text: "text"
+          '@schemaLocation': "http://example.com/aeiou"
+        serviceDate: "serviceDate"
+        endDate: "2000-01-23T04:56:07.000+00:00"
+        supportingResource:
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@type': "@type"
+        hasStarted: true
+        description: "description"
+        serviceOrder:
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          serviceOrderItemId: "serviceOrderItemId"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          serviceOrderItemId: "serviceOrderItemId"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        serviceRelationship:
+        - relationshipType: "relationshipType"
+          '@baseType': "@baseType"
+          service:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@type': "@type"
+          '@schemaLocation': "http://example.com/aeiou"
+        - relationshipType: "relationshipType"
+          '@baseType': "@baseType"
+          service:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@type': "@type"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@baseType': "@baseType"
+        id: "id"
+        href: "href"
+        place:
+        - role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        state: {}
+        '@schemaLocation': "http://example.com/aeiou"
+        isStateful: true
+        serviceCharacteristic:
+        - '@baseType': "@baseType"
+          '@type': "@type"
+          valueType: "valueType"
+          name: "name"
+          '@schemaLocation': "http://example.com/aeiou"
+          value: {}
+        - '@baseType': "@baseType"
+          '@type': "@type"
+          valueType: "valueType"
+          name: "name"
+          '@schemaLocation': "http://example.com/aeiou"
+          value: {}
+        serviceSpecification:
+          targetServiceSchema:
+            '@baseType': "@baseType"
+            '@type': "@type"
+            '@schemaLocation': "@schemaLocation"
+          '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+          version: "version"
+        supportingService:
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        relatedParty:
+        - '@referredType': "@referredType"
+          role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "@schemaLocation"
+        - '@referredType': "@referredType"
+          role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "@schemaLocation"
+        isServiceEnabled: true
+        startMode: "startMode"
+        name: "name"
+        category: "category"
+        startDate: "2000-01-23T04:56:07.000+00:00"
+  ServiceBatchNotification:
+    type: "object"
+    properties:
+      eventId:
+        type: "string"
+        description: "The identifier of the notification"
+      eventTime:
+        type: "string"
+        format: "date-time"
+        description: "Time of the event occurence"
+      eventType:
+        type: "string"
+        description: "The type of the notification"
+      fieldPath:
+        type: "string"
+        description: "The path identifying the object field concerned by this notification"
+      resourcePath:
+        type: "string"
+        description: "The path identifying the resource object concerned by this notification"
+      event:
+        description: "The event linked to the involved resource object"
+        $ref: "#/definitions/ServiceBatchEvent"
+    description: "The notification data structure"
+    example:
+      eventId: "eventId"
+      resourcePath: "resourcePath"
+      eventTime: "2000-01-23T04:56:07.000+00:00"
+      fieldPath: "fieldPath"
+      eventType: "eventType"
+      event:
+        service:
+          serviceType: "serviceType"
+          note:
+          - date: "2000-01-23T04:56:07.000+00:00"
+            system: "system"
+            '@baseType': "@baseType"
+            author: "author"
+            '@type': "@type"
+            text: "text"
+            '@schemaLocation': "http://example.com/aeiou"
+          - date: "2000-01-23T04:56:07.000+00:00"
+            system: "system"
+            '@baseType': "@baseType"
+            author: "author"
+            '@type': "@type"
+            text: "text"
+            '@schemaLocation': "http://example.com/aeiou"
+          serviceDate: "serviceDate"
+          endDate: "2000-01-23T04:56:07.000+00:00"
+          supportingResource:
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@type': "@type"
+          hasStarted: true
+          description: "description"
+          serviceOrder:
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            serviceOrderItemId: "serviceOrderItemId"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            serviceOrderItemId: "serviceOrderItemId"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          serviceRelationship:
+          - relationshipType: "relationshipType"
+            '@baseType': "@baseType"
+            service:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              id: "id"
+              href: "href"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@type': "@type"
+            '@schemaLocation': "http://example.com/aeiou"
+          - relationshipType: "relationshipType"
+            '@baseType': "@baseType"
+            service:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              id: "id"
+              href: "href"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@type': "@type"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@baseType': "@baseType"
+          id: "id"
+          href: "href"
+          place:
+          - role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          state: {}
+          '@schemaLocation': "http://example.com/aeiou"
+          isStateful: true
+          serviceCharacteristic:
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            valueType: "valueType"
+            name: "name"
+            '@schemaLocation': "http://example.com/aeiou"
+            value: {}
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            valueType: "valueType"
+            name: "name"
+            '@schemaLocation': "http://example.com/aeiou"
+            value: {}
+          serviceSpecification:
+            targetServiceSchema:
+              '@baseType': "@baseType"
+              '@type': "@type"
+              '@schemaLocation': "@schemaLocation"
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+            version: "version"
+          supportingService:
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          relatedParty:
+          - '@referredType': "@referredType"
+            role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "@schemaLocation"
+          - '@referredType': "@referredType"
+            role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "@schemaLocation"
+          isServiceEnabled: true
+          startMode: "startMode"
+          name: "name"
+          category: "category"
+          startDate: "2000-01-23T04:56:07.000+00:00"
+  ServiceBatchEvent:
+    type: "object"
+    properties:
+      service:
+        description: "The involved resource data for the event"
+        $ref: "#/definitions/Service"
+    description: "The event data structure"
+    example:
+      service:
+        serviceType: "serviceType"
+        note:
+        - date: "2000-01-23T04:56:07.000+00:00"
+          system: "system"
+          '@baseType': "@baseType"
+          author: "author"
+          '@type': "@type"
+          text: "text"
+          '@schemaLocation': "http://example.com/aeiou"
+        - date: "2000-01-23T04:56:07.000+00:00"
+          system: "system"
+          '@baseType': "@baseType"
+          author: "author"
+          '@type': "@type"
+          text: "text"
+          '@schemaLocation': "http://example.com/aeiou"
+        serviceDate: "serviceDate"
+        endDate: "2000-01-23T04:56:07.000+00:00"
+        supportingResource:
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@type': "@type"
+        hasStarted: true
+        description: "description"
+        serviceOrder:
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          serviceOrderItemId: "serviceOrderItemId"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          serviceOrderItemId: "serviceOrderItemId"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        serviceRelationship:
+        - relationshipType: "relationshipType"
+          '@baseType': "@baseType"
+          service:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@type': "@type"
+          '@schemaLocation': "http://example.com/aeiou"
+        - relationshipType: "relationshipType"
+          '@baseType': "@baseType"
+          service:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@type': "@type"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@baseType': "@baseType"
+        id: "id"
+        href: "href"
+        place:
+        - role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        state: {}
+        '@schemaLocation': "http://example.com/aeiou"
+        isStateful: true
+        serviceCharacteristic:
+        - '@baseType': "@baseType"
+          '@type': "@type"
+          valueType: "valueType"
+          name: "name"
+          '@schemaLocation': "http://example.com/aeiou"
+          value: {}
+        - '@baseType': "@baseType"
+          '@type': "@type"
+          valueType: "valueType"
+          name: "name"
+          '@schemaLocation': "http://example.com/aeiou"
+          value: {}
+        serviceSpecification:
+          targetServiceSchema:
+            '@baseType': "@baseType"
+            '@type': "@type"
+            '@schemaLocation': "@schemaLocation"
+          '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+          version: "version"
+        supportingService:
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        relatedParty:
+        - '@referredType': "@referredType"
+          role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "@schemaLocation"
+        - '@referredType': "@referredType"
+          role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "@schemaLocation"
+        isServiceEnabled: true
+        startMode: "startMode"
+        name: "name"
+        category: "category"
+        startDate: "2000-01-23T04:56:07.000+00:00"
+  ServiceDeleteNotification:
+    type: "object"
+    properties:
+      eventId:
+        type: "string"
+        description: "The identifier of the notification"
+      eventTime:
+        type: "string"
+        format: "date-time"
+        description: "Time of the event occurence"
+      eventType:
+        type: "string"
+        description: "The type of the notification"
+      fieldPath:
+        type: "string"
+        description: "The path identifying the object field concerned by this notification"
+      resourcePath:
+        type: "string"
+        description: "The path identifying the resource object concerned by this notification"
+      event:
+        description: "The event linked to the involved resource object"
+        $ref: "#/definitions/ServiceDeleteEvent"
+    description: "The notification data structure"
+    example:
+      eventId: "eventId"
+      resourcePath: "resourcePath"
+      eventTime: "2000-01-23T04:56:07.000+00:00"
+      fieldPath: "fieldPath"
+      eventType: "eventType"
+      event:
+        service:
+          serviceType: "serviceType"
+          note:
+          - date: "2000-01-23T04:56:07.000+00:00"
+            system: "system"
+            '@baseType': "@baseType"
+            author: "author"
+            '@type': "@type"
+            text: "text"
+            '@schemaLocation': "http://example.com/aeiou"
+          - date: "2000-01-23T04:56:07.000+00:00"
+            system: "system"
+            '@baseType': "@baseType"
+            author: "author"
+            '@type': "@type"
+            text: "text"
+            '@schemaLocation': "http://example.com/aeiou"
+          serviceDate: "serviceDate"
+          endDate: "2000-01-23T04:56:07.000+00:00"
+          supportingResource:
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@type': "@type"
+          hasStarted: true
+          description: "description"
+          serviceOrder:
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            serviceOrderItemId: "serviceOrderItemId"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            serviceOrderItemId: "serviceOrderItemId"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          serviceRelationship:
+          - relationshipType: "relationshipType"
+            '@baseType': "@baseType"
+            service:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              id: "id"
+              href: "href"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@type': "@type"
+            '@schemaLocation': "http://example.com/aeiou"
+          - relationshipType: "relationshipType"
+            '@baseType': "@baseType"
+            service:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              id: "id"
+              href: "href"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@type': "@type"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@baseType': "@baseType"
+          id: "id"
+          href: "href"
+          place:
+          - role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          state: {}
+          '@schemaLocation': "http://example.com/aeiou"
+          isStateful: true
+          serviceCharacteristic:
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            valueType: "valueType"
+            name: "name"
+            '@schemaLocation': "http://example.com/aeiou"
+            value: {}
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            valueType: "valueType"
+            name: "name"
+            '@schemaLocation': "http://example.com/aeiou"
+            value: {}
+          serviceSpecification:
+            targetServiceSchema:
+              '@baseType': "@baseType"
+              '@type': "@type"
+              '@schemaLocation': "@schemaLocation"
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+            version: "version"
+          supportingService:
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          relatedParty:
+          - '@referredType': "@referredType"
+            role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "@schemaLocation"
+          - '@referredType': "@referredType"
+            role: "role"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "@schemaLocation"
+          isServiceEnabled: true
+          startMode: "startMode"
+          name: "name"
+          category: "category"
+          startDate: "2000-01-23T04:56:07.000+00:00"
+  ServiceDeleteEvent:
+    type: "object"
+    properties:
+      service:
+        description: "The involved resource data for the event"
+        $ref: "#/definitions/Service"
+    description: "The event data structure"
+    example:
+      service:
+        serviceType: "serviceType"
+        note:
+        - date: "2000-01-23T04:56:07.000+00:00"
+          system: "system"
+          '@baseType': "@baseType"
+          author: "author"
+          '@type': "@type"
+          text: "text"
+          '@schemaLocation': "http://example.com/aeiou"
+        - date: "2000-01-23T04:56:07.000+00:00"
+          system: "system"
+          '@baseType': "@baseType"
+          author: "author"
+          '@type': "@type"
+          text: "text"
+          '@schemaLocation': "http://example.com/aeiou"
+        serviceDate: "serviceDate"
+        endDate: "2000-01-23T04:56:07.000+00:00"
+        supportingResource:
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@type': "@type"
+        hasStarted: true
+        description: "description"
+        serviceOrder:
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          serviceOrderItemId: "serviceOrderItemId"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          serviceOrderItemId: "serviceOrderItemId"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        serviceRelationship:
+        - relationshipType: "relationshipType"
+          '@baseType': "@baseType"
+          service:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@type': "@type"
+          '@schemaLocation': "http://example.com/aeiou"
+        - relationshipType: "relationshipType"
+          '@baseType': "@baseType"
+          service:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            id: "id"
+            href: "href"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@type': "@type"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@baseType': "@baseType"
+        id: "id"
+        href: "href"
+        place:
+        - role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        state: {}
+        '@schemaLocation': "http://example.com/aeiou"
+        isStateful: true
+        serviceCharacteristic:
+        - '@baseType': "@baseType"
+          '@type': "@type"
+          valueType: "valueType"
+          name: "name"
+          '@schemaLocation': "http://example.com/aeiou"
+          value: {}
+        - '@baseType': "@baseType"
+          '@type': "@type"
+          valueType: "valueType"
+          name: "name"
+          '@schemaLocation': "http://example.com/aeiou"
+          value: {}
+        serviceSpecification:
+          targetServiceSchema:
+            '@baseType': "@baseType"
+            '@type': "@type"
+            '@schemaLocation': "@schemaLocation"
+          '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+          version: "version"
+        supportingService:
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "http://example.com/aeiou"
+        relatedParty:
+        - '@referredType': "@referredType"
+          role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "@schemaLocation"
+        - '@referredType': "@referredType"
+          role: "role"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "@schemaLocation"
+        isServiceEnabled: true
+        startMode: "startMode"
+        name: "name"
+        category: "category"
+        startDate: "2000-01-23T04:56:07.000+00:00"
+  Error:
+    type: "object"
+    required:
+    - "code"
+    - "reason"
+    properties:
+      code:
+        type: "integer"
+        description: "Application relevant detail, defined in the API or a common\
+          \ list."
+      reason:
+        type: "string"
+        description: "Explanation of the reason for the error which can be shown to\
+          \ a client user."
+      message:
+        type: "string"
+        description: "More details and corrective actions related to the error which\
+          \ can be shown to a client user."
+      status:
+        type: "integer"
+        description: "HTTP Error code extension"
+      referenceError:
+        type: "string"
+        format: "uri"
+        description: "URI of documentation describing the error."
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class."
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class entity name."
+    description: "Used when an API throws an Error, typically with a HTTP error response-code\
+      \ (3xx, 4xx, 5xx)"
